@@ -34,12 +34,6 @@ def validate_input(filename):
                         raise MyError('Puzzle column length mismatch')
                 puzzle = list(chain(*lines[1:]))
                 puzzle = [check_int(i) for i in puzzle]
-
-                # Check if puzzle == solved puzzle later on
-                # if len(set(puzzle)) != len(puzzle):
-                #     raise MyError('Puzzle has duplicate values')
-                #
-                # print(puzzle)
                 return psize, puzzle
         else:
             raise EOFError
@@ -62,7 +56,7 @@ def validate_input(filename):
 def parse_arguments():
     parser = ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('-f', '--file', type=validate_input)
+    group.add_argument('-p', '--puzzle', type=validate_input)
     group.add_argument('-g', '--generate', type=(lambda x: int(x) if int(x) > 3 else 3),
                         help="Size of the puzzle's side. Must be >= 3, otherwise defaults to 3",
                         dest="puzzle_size", default=3, required=False)
@@ -73,9 +67,27 @@ def parse_arguments():
 
 
 def parse_input():
-    args = parse_arguments()
-    print(vars(args)) #tst
-
+    args = vars(parse_arguments())
+    print(args) #tst
+    if args['puzzle']:
+        args['puzzle_size'] = args['puzzle'][0]
+        args['puzzle'] = args['puzzle'][1]
+        
+    print(args) #tst
+    
+#Your functions here
+#     else:
+#         args['puzzle'] = generate_puzzle(args['puzzle_size'])
+    
+#     args['solved'] = make_solved_puzzle(args['puzzle_size'])
+# # Check if sorted puzzle == solved puzzle
+#     try:    
+#         if (set(args['puzzle'])) != set(args['solved']):
+#             raise MyError('Invalid puzzle')
+#     except MyError as error:
+#         print(error.value)
+#     check_if_puzzle_is_solvable(args['puzzle'])
+    
 
 def main():
     parse_input()
