@@ -1,5 +1,6 @@
 from itertools import product
 from math import sqrt
+import numpy as np
 
 
 class Heuristic():
@@ -52,3 +53,6 @@ class Hamming(Heuristic):
         
     def get_h(self, puzzle, solved):
         return np.count_nonzero(np.array(puzzle) - np.array(solved))
+
+
+heuristics = [Manhattan, Euclidian, Hamming]

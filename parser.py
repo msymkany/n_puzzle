@@ -5,6 +5,8 @@ import shlex
 from my_error import MyError
 from itertools import chain
 import random
+from Solver import Solver
+from heuristics import heuristics
 
 args = 0
 def check_int(num):
@@ -297,10 +299,11 @@ def check_if_puzzle_is_solvable(a, p):
 
 def main():
     args = parse_input()
-    # print(args) # tst
     if (not args['puzzle']):
         args['puzzle'] = generate_puzzle(args['puzzle_size'], args['iterations'])
     args['solved'] = make_solved_puzzle(args['puzzle_size'])
+    print(args) # tst
+
 # # Check if sorted puzzle == solved puzzle
     try:    
         if (set(args['puzzle'])) != set(args['solved']):
@@ -314,7 +317,9 @@ def main():
     #     print("gogogo")
     # else:
     #     print("Sad")
-
+    solv = Solver(args['puzzle'], args['puzzle_size'], args['solved'],
+                  heuristics[args['heuristic'] - 1](args['puzzle_size']))
+    solv.a_star()
 
 if __name__ == "__main__":
     main()
