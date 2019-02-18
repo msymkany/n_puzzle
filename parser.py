@@ -1,4 +1,4 @@
-# import sys
+import sys
 from argparse import ArgumentParser
 import os
 import shlex
@@ -308,11 +308,12 @@ def main():
     try:    
         if (set(args['puzzle'])) != set(args['solved']):
             raise MyError('Invalid puzzle')
-        if not (check_if_puzzle_is_solvable(args['puzzle_size'], args['puzzle'])):
+        if not (check_if_puzzle_is_solvable(args['puzzle_size'], args['puzzle'][:])):
             raise MyError('The puzzle is unsolvable')
     #     print("gogogo")
     except MyError as error:
         print(error.value)
+        return()
     # if (check_if_puzzle_is_solvable(args['puzzle_size'], args['puzzle'])):
     #     print("gogogo")
     # else:
@@ -320,6 +321,7 @@ def main():
     solv = Solver(args['puzzle'], args['puzzle_size'], args['solved'],
                   heuristics[args['heuristic'] - 1](args['puzzle_size']))
     solv.a_star()
+
 
 if __name__ == "__main__":
     main()

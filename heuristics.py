@@ -8,6 +8,7 @@ class Heuristic():
     def __init__(self, size):
         self.size = size
         self.len = size * size
+        self.dist_map = 0
 
     def get_distance_one_num(self, row, col):
         pass
