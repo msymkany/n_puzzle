@@ -3,7 +3,8 @@ from moves import moves
 
 class Solver:
 
-    def __init__(self, puzzle, psize, target, heuristic, f_calculation=(lambda g, h: g + h)):
+    def __init__(self, puzzle, psize, target, 
+                heuristic, f_calculation):
         self.initial = puzzle
         self.solved_puzzle_hash = str(target)
         self.solved_puzzle = target
@@ -13,14 +14,15 @@ class Solver:
                                    index=[(str(puzzle))])
         self.heuristic = heuristic
         self.f_calculation = f_calculation
+        self.comp_in_time = 0
 
     def a_star(self):
         while self.states['is_open_list'].sum():
-#             print(self.states) # tst
             current = self.states[self.states.is_open_list == 1].iloc[0]
             if current.name == self.solved_puzzle_hash:
                 return self.get_result(current)
             else:
+                self.comp_in_time += 1
                 self.states.loc[current.name, 'is_open_list'] = 0
                 self.expand(current)
                 self.states = self.states.sort_values('f')
@@ -51,8 +53,7 @@ class Solver:
             print(ch)
 
     def get_result(self, current):
-#         print(type(current.name))
-#         print(self.states.loc[current.name, 'parent'])
+        print('Complexity in time: ', self.comp_in_time)
+        print('Complexity in space: ', self.states.shape[0])
+        print('Number of moves to solve puzzle: ', current.g)
         self.print_states(current.name, self.psize)
-#         print('finita')
-#         return self.states

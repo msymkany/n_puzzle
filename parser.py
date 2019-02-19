@@ -68,34 +68,20 @@ def parse_arguments():
                         dest="heuristic", default=1)
     parser.add_argument('-i', '--iterations', type=int,
                         action="store",
-                        dest="iterations", default=1000)
+                        dest="iterations", default=31)
+    parser.add_argument('-c', '--coefficient', type=int,
+                        action="store",
+                        dest="coefficient", default=1)
     return parser.parse_args()
 
 
 def parse_input():
     args = vars(parse_arguments())
-    # print(args) #tst
     if args['puzzle']:
         args['puzzle_size'] = args['puzzle'][0]
         args['puzzle'] = args['puzzle'][1]
         
-    print(args) #tst
     return (args)
-    
-#Your functions here
-#     else:
-#         args['puzzle'] = generate_puzzle(args['puzzle_size'])
-    
-#     args['solved'] = make_solved_puzzle(args['puzzle_size'])
-# # Check if sorted puzzle == solved puzzle
-#     try:    
-#         if (set(args['puzzle'])) != set(args['solved']):
-#             raise MyError('Invalid puzzle')
-#     except MyError as error:
-#         print(error.value)
-#     check_if_puzzle_is_solvable(args['puzzle'])
-    
-#1 2 3 4 12 13 14 5 11 0 15 6 10 9 8 7
 
 def generate_puzzle(a, iters):
     p = make_solved_puzzle(a)
@@ -214,97 +200,13 @@ def check_if_puzzle_is_solvable(a, p):
     else:
         return 1
 
-# def check_if_puzzle_is_solvable(a, p):
-#     inver = 0
-#     size = a - 1
-#
-#     pos = -1
-#
-#     row_t = 0
-#     col_t = -1
-#     way_row_t = 0
-#     way_col_t = 1
-#     step_t = 1
-#     zone00_t = 0
-#     zone01_t = 0
-#     zone11_t = 0
-#     zone10_t = 0
-#     while step_t < a * a:
-#         row_t += way_row_t
-#         col_t += way_col_t
-#         if (row_t == (zone00_t) and col_t == zone00_t - 1): # 0 0
-#             way_row_t = 0
-#             way_col_t = 1
-#             zone10_t += 1
-#         elif (col_t == (size - zone01_t) and row_t == (0 + zone01_t)): # 0 1
-#             way_row_t = 1
-#             way_col_t = 0
-#             zone00_t += 1
-#         elif (row_t == (size - zone11_t) and col_t == (size - zone11_t)): # 1 1
-#             way_row_t = 0
-#             way_col_t = -1
-#             zone01_t += 1
-#         elif (col_t == (zone10_t) and row_t == (size - zone10_t)): # 1 0
-#             way_row_t = -1
-#             way_col_t = 0
-#             zone11_t += 1
-#         step_t += 1
-#
-#         row = 0
-#         col = -1
-#         way_row = 0
-#         way_col = 1
-#         step = 1
-#         zone00 = 0
-#         zone01 = 0
-#         zone11 = 0
-#         zone10 = 0
-#         if (pos == -1 and p[row_t * a + col_t] == 0):
-#             pos = step_t
-#         while step <= a * a:
-#             row += way_row
-#             col += way_col
-#             if (p[row * a + col] < p[row_t * a + col_t]) and p[row * a + col] != 0:
-#                 inver += 1
-#             if (row == (zone00) and col == zone00 - 1): # 0 0
-#                 way_row = 0
-#                 way_col = 1
-#                 zone10 += 1
-#             elif (col == (size - zone01) and row == (0 + zone01)): # 0 1
-#                 way_row = 1
-#                 way_col = 0
-#                 zone00 += 1
-#             elif (row == (size - zone11) and col == (size - zone11)): # 1 1
-#                 way_row = 0
-#                 way_col = -1
-#                 zone01 += 1
-#             elif (col == (zone10) and row == (size - zone10)): # 1 0
-#                 way_row = -1
-#                 way_col = 0
-#                 zone11 += 1
-#             step += 1
-#         p[row_t * a + col_t] = 0
-#     pos = int(pos / a)
-#     print(inver)
-#     print(pos)
-#     if a % 2 != 0 and inver % 2 == 0:
-#         return (1)
-#     elif a % 2 == 0:
-#         if pos % 2 != 0 and inver % 2 != 0:
-#             return (1)
-#         elif pos % 2 == 0 and inver % 2 == 0:
-#             return (1)
-#     return (0)
-
-
 def main():
     args = parse_input()
     if (not args['puzzle']):
         args['puzzle'] = generate_puzzle(args['puzzle_size'], args['iterations'])
     args['solved'] = make_solved_puzzle(args['puzzle_size'])
-    print(args) # tst
+    # print(args) # tst
 
-# # Check if sorted puzzle == solved puzzle
     try:    
         if (set(args['puzzle'])) != set(args['solved']):
             raise MyError('Invalid puzzle')
@@ -319,7 +221,8 @@ def main():
     # else:
     #     print("Sad")
     solv = Solver(args['puzzle'], args['puzzle_size'], args['solved'],
-                  heuristics[args['heuristic'] - 1](args['puzzle_size']))
+                  heuristics[args['heuristic'] - 1](args['puzzle_size']),
+                   f_calculation =(lambda g, h: g + h * args['coefficient']))
     solv.a_star()
 
 
