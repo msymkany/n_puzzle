@@ -190,7 +190,7 @@ def main():
     try:    
         if (set(args['puzzle'])) != set(args['solved']):
             raise MyError('Invalid puzzle')
-        if not (check_if_puzzle_is_solvable(args['puzzle_size'], args['puzzle'][:])):
+        if not (check_if_puzzle_is_solvable(args['puzzle_size'], args['puzzle'][:], args['solved'][:])):
             raise MyError('The puzzle is unsolvable')
     except MyError as error:
         print(error.value)
