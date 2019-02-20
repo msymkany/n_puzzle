@@ -7,6 +7,7 @@ from itertools import chain
 import random
 from Solver import Solver
 from heuristics import heuristics
+from is_solvable import check_if_puzzle_is_solvable
 
 args = 0
 def check_int(num):
@@ -42,19 +43,25 @@ def validate_input(filename):
             raise EOFError
     except EOFError:
         print("Empty file")
+        sys.exit()
     except FileNotFoundError:
         print("File not found")
+        sys.exit()
     except IsADirectoryError:
         print("Is a directory")
+        sys.exit()
     except PermissionError:
         print("Don't have permission to read a file")
+        sys.exit()
     except IOError:
         print("Fail to read the file")
+        sys.exit()
     except ValueError:
         print("No puzzle in file")
+        sys.exit()
     except MyError as error:
         print(error.value)
-
+        sys.exit()
 
 def parse_arguments():
     parser = ArgumentParser()
@@ -85,15 +92,12 @@ def parse_input():
 
 def generate_puzzle(a, iters):
     p = make_solved_puzzle(a)
-    # p[2 * a + 0] = 0
-    # p[9] = 30
     size = a - 1
     row = 0
     row_0 = -1
     col_0 = -1
     row_1 = -1
     col_1 = -1
-    #find coord of 0
     while (row < a and row_0 == -1):
         col = 0
         while (col < a and row_0 == -1):
@@ -105,7 +109,6 @@ def generate_puzzle(a, iters):
     it = 0
     while (it < iters):
         r1 = [0, 1, 2, 3]
-        #random 0 - left, 1 - up, 2 - right, 3 - down
         if (row_0 == 0 and col_0 == 0):         # 0 0
             r1 = [2, 3]                         #23
         elif (row_0 == 0 and col_0 == size):    # 0 1
@@ -178,51 +181,23 @@ def make_solved_puzzle(a):
         step += 1
     return (p)
 
-def check_if_puzzle_is_solvable(a, p):
-    inver = 0
-    size = a - 1
-
-    i = 0
-    while p[i] != 0:
-        i += 1
-    p[i] = a * a
-
-    i = 0
-    while i < (a * a):
-        j = i
-        while j < (a * a):
-            if (p[j] < p[i]):
-                inver += 1
-            j += 1
-        i += 1
-    if inver % 2 == 0:
-        return 0
-    else:
-        return 1
-
 def main():
     args = parse_input()
     if (not args['puzzle']):
         args['puzzle'] = generate_puzzle(args['puzzle_size'], args['iterations'])
     args['solved'] = make_solved_puzzle(args['puzzle_size'])
-    # print(args) # tst
 
     try:    
         if (set(args['puzzle'])) != set(args['solved']):
             raise MyError('Invalid puzzle')
         if not (check_if_puzzle_is_solvable(args['puzzle_size'], args['puzzle'][:])):
             raise MyError('The puzzle is unsolvable')
-    #     print("gogogo")
     except MyError as error:
         print(error.value)
         return()
-    # if (check_if_puzzle_is_solvable(args['puzzle_size'], args['puzzle'])):
-    #     print("gogogo")
-    # else:
-    #     print("Sad")
     solv = Solver(args['puzzle'], args['puzzle_size'], args['solved'],
                   heuristics[args['heuristic'] - 1](args['puzzle_size']),
-                   f_calculation =(lambda g, h: g + h * args['coefficient']))
+                   f_calculation =(lambda g, h: g + h * (args['coefficient'])))
     solv.a_star()
 
 
